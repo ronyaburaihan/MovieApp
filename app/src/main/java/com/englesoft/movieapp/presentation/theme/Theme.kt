@@ -1,4 +1,4 @@
-package com.englesoft.movieapp.ui.theme
+package com.englesoft.movieapp.presentation.theme
 
 import android.app.Activity
 import android.os.Build

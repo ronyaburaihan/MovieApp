@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,7 +24,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
+            buildConfigField("String", "API_KEY", "\"${getApiKey()}\"")
+        }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
+            buildConfigField("String", "API_KEY", "\"${getApiKey()}\"")
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -38,6 +47,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -80,4 +90,16 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+}
+
+fun getApiKey(): String {
+    val properties = Properties()
+    val localPropertiesFile = File(rootProject.projectDir, "local.properties")
+    if (!localPropertiesFile.exists()) {
+        throw GradleException("local.properties file not found.")
+    }
+    properties.load(localPropertiesFile.inputStream())
+
+    return properties.getProperty("api_key")
+        ?: throw GradleException("Add 'api_key' field in the local.properties file.")
 }
