@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.englesoft.movieapp.presentation.home.HomeScreen
 import com.englesoft.movieapp.presentation.theme.MovieAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,10 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MovieAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    HomeScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }

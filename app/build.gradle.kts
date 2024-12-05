@@ -25,11 +25,11 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
+            buildConfigField("String", "BASE_URL", "\"https://www.omdbapi.com\"")
             buildConfigField("String", "API_KEY", "\"${getApiKey()}\"")
         }
         release {
-            buildConfigField("String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\"")
+            buildConfigField("String", "BASE_URL", "\"https://www.omdbapi.com\"")
             buildConfigField("String", "API_KEY", "\"${getApiKey()}\"")
 
             isMinifyEnabled = false
