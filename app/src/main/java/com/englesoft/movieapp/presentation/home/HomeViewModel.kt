@@ -32,9 +32,9 @@ class HomeViewModel @Inject constructor(
         // Fetch carousels and rails in parallel
         viewModelScope.launch {
             try {
-                val latestMovies = async { getMoviesUseCase("Latest", null) }
-                val batmanMovies = async { getMoviesUseCase("Batman", null) }
-                val latestMovies2022 = async { getMoviesUseCase("Latest", "2022") }
+                val latestMovies = async { getMoviesUseCase("Latest", null, null) }
+                val batmanMovies = async { getMoviesUseCase("Batman", null, null) }
+                val latestMovies2022 = async { getMoviesUseCase("Latest", "2022", null) }
 
                 // Await the results and ensure the carousel is limited to 5 items
                 val latestMoviesResult = latestMovies.await()

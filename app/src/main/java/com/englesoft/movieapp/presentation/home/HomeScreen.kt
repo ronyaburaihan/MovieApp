@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -108,11 +109,26 @@ private fun HomeScreenContent(
         // Carousel with movie banners
         MovieBannerCarouselWithIndicators(movies = state.movieCarousels,
             onItemClicked = {
-                navController.navigate("search/$it")
+                navController.navigate("movie_details/$it")
             }
         )
 
-        Spacer(modifier = Modifier.height(16.dp)) // Spacing between sections
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Popular Movie List",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .clickable {
+                    navController.navigate("movie_list")
+                }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Rail 1: Batman Movies
         Text(
@@ -123,7 +139,7 @@ private fun HomeScreenContent(
 
         MovieRail(movies = state.batmanRails,
             onCardClick = {
-                navController.navigate("search/$it")
+                navController.navigate("movie_details/$it")
             }
         )
 
@@ -138,7 +154,7 @@ private fun HomeScreenContent(
 
         MovieRail(movies = state.latestRails,
             onCardClick = {
-                navController.navigate("search/$it")
+                navController.navigate("movie_details/$it")
             }
         )
     }
@@ -222,7 +238,7 @@ private fun IndicatorDots(isSelected: Boolean, modifier: Modifier) {
             .size(size.value)
             .clip(CircleShape)
             .background(
-                if (isSelected) Color(0xff373737) else Color(0xA8373737)
+                if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer
             )
     )
 }

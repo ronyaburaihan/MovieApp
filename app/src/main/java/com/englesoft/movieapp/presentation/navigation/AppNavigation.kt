@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.englesoft.movieapp.presentation.details.DetailsScreen
 import com.englesoft.movieapp.presentation.home.HomeScreen
+import com.englesoft.movieapp.presentation.movie_list.MovieListScreen
 
 @Composable
 fun AppNavigation(
@@ -15,7 +16,10 @@ fun AppNavigation(
         composable("home") {
             HomeScreen(navController = navController)
         }
-        composable("search/{imdbID}") {
+        composable("movie_list") {
+            MovieListScreen(navController = navController)
+        }
+        composable("movie_details/{imdbID}") {
             DetailsScreen(
                 navController = navController,
                 imdbID = it.arguments?.getString("imdbID") ?: ""

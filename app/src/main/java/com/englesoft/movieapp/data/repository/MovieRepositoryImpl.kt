@@ -12,12 +12,13 @@ import javax.inject.Inject
 class MovieRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi
 ) : MovieRepository {
-    override suspend fun getMovies(query: String, year: String?): Resource<List<Movie>> {
+    override suspend fun getMovies(query: String, year: String?, page: Int?): Resource<List<Movie>> {
         return try {
             Resource.Success(
                 data = movieApi.getMovies(
                     query = query,
-                    year = year
+                    year = year,
+                    page = page
                 ).movieDtos.map { it.toMovie() }
             )
         } catch (e: Exception) {
