@@ -2,7 +2,7 @@ package com.englesoft.movieapp.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Movie(
+data class MovieDto(
     val imdbID: String,
     @SerializedName("Title")
     val title: String,

@@ -1,9 +1,11 @@
 package com.englesoft.movieapp.presentation.home
 
-import com.englesoft.movieapp.data.model.Movie
+import com.englesoft.movieapp.domain.model.Movie
 
 data class HomeScreenState(
-    val movies: List<Movie>? = null,
+    val movieCarousels: List<Movie>? = null,
+    val batmanRails: List<Movie>? = null,
+    val latestRails: List<Movie>? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )

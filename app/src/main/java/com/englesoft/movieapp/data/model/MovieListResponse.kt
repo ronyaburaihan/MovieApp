@@ -7,5 +7,5 @@ data class MovieListResponse(
     @SerializedName("Response")
     val response: String,
     @SerializedName("Search")
-    val movies: List<Movie>
+    val movieDtos: List<MovieDto>
 )
