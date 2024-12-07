@@ -1,6 +1,5 @@
 package com.englesoft.movieapp.presentation.details
 
-import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,14 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
@@ -170,21 +166,16 @@ private fun DetailsScreenContent(movie: MovieDetails) {
 
 @Composable
 fun MovieVideoPlayer(
-    movie: MovieDetails
+    movie: MovieDetails,
+    viewModel: VideoPlayerViewModel = hiltViewModel()
 ) {
     var isPlaying by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(movie.streamUrl))
-            prepare()
-        }
-    }
+    val exoPlayer = remember { viewModel.preparePlayer(movie.streamUrl) }
 
     // Release ExoPlayer when the composable is removed
     DisposableEffect(Unit) {
         onDispose {
-            exoPlayer.release()
+            viewModel.saveCurrentPosition()
         }
     }
 
@@ -197,15 +188,11 @@ fun MovieVideoPlayer(
             // Video Player
             AndroidView(
                 modifier = Modifier.fillMaxWidth(),
-                factory = { ctx ->
-                    PlayerView(ctx).apply {
+                factory = { context ->
+                    PlayerView(context).apply {
                         player = exoPlayer
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
                     }
-                }
+                },
             )
         } else {
             // Thumbnail Image

@@ -1,5 +1,7 @@
 package com.englesoft.movieapp.di
 
+import android.app.Application
+import android.content.Context
 import com.englesoft.movieapp.BuildConfig
 import com.englesoft.movieapp.data.remote.MovieApi
 import dagger.Module
@@ -53,5 +55,11 @@ object AppModule {
     @Singleton
     fun provideWeatherApi(retrofit: Retrofit): MovieApi {
         return retrofit.create(MovieApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideContext(application: Application): Context {
+        return application.applicationContext
     }
 }
