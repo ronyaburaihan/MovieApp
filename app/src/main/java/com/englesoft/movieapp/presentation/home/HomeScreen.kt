@@ -106,7 +106,11 @@ private fun HomeScreenContent(
             .verticalScroll(rememberScrollState())
     ) {
         // Carousel with movie banners
-        MovieBannerCarouselWithIndicators(movies = state.movieCarousels)
+        MovieBannerCarouselWithIndicators(movies = state.movieCarousels,
+            onItemClicked = {
+                navController.navigate("search/$it")
+            }
+        )
 
         Spacer(modifier = Modifier.height(16.dp)) // Spacing between sections
 
@@ -170,17 +174,15 @@ private fun MovieBannerCarouselWithIndicators(
             Card(
                 Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .clickable {
+                        onItemClicked(movies?.get(currentPage)?.imdbID ?: "")
+                    },
                 elevation = CardDefaults.cardElevation(4.dp),
             ) {
                 Image(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            onClick = {
-                                onItemClicked(movies?.get(currentPage)?.imdbID ?: "")
-                            }
-                        ),
+                        .fillMaxSize(),
                     painter = rememberAsyncImagePainter(movies?.get(currentPage)?.poster),
                     contentScale = ContentScale.FillBounds,
                     contentDescription = ""
