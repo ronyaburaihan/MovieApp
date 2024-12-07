@@ -1,6 +1,6 @@
 package com.englesoft.movieapp.data.remote
 
-import com.englesoft.movieapp.data.model.MovieDetails
+import com.englesoft.movieapp.data.model.MovieDetailsDto
 import com.englesoft.movieapp.data.model.MovieListResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -16,5 +16,5 @@ interface MovieApi {
     @GET("/")
     suspend fun getMovieDetails(
         @Query("i") imdbID: String
-    ): MovieDetails
+    ): MovieDetailsDto
 }

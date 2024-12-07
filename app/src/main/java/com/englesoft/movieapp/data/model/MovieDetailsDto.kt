@@ -2,7 +2,7 @@ package com.englesoft.movieapp.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieDetails(
+data class MovieDetailsDto(
     @SerializedName("Actors")
     val actors: String,
     @SerializedName("Awards")
@@ -30,7 +30,7 @@ data class MovieDetails(
     @SerializedName("Rated")
     val rated: String,
     @SerializedName("Ratings")
-    val ratings: List<Rating>,
+    val ratings: List<RatingDto>,
     @SerializedName("Released")
     val released: String,
     @SerializedName("Response")

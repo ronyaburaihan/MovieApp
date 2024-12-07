@@ -3,8 +3,7 @@ package com.englesoft.movieapp.presentation.home
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,11 +23,15 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -39,55 +42,68 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.englesoft.movieapp.domain.model.Movie
 import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
 
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        when {
-            state.isLoading -> {
-                // Show loading spinner
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Movie App") },
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            when {
+                state.isLoading -> {
+                    // Show loading spinner
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
 
-            state.error != null -> {
-                // Show error message
-                Text(
-                    text = state.error,
-                    color = Color.Red,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+                state.error != null -> {
+                    // Show error message
+                    Text(
+                        text = state.error,
+                        color = Color.Red,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
 
-            state.movieCarousels != null -> {
-                // Show content
-                HomeScreenContent(state = state)
+                state.movieCarousels != null -> {
+                    // Show content
+                    HomeScreenContent(state = state, navController = navController)
+                }
             }
         }
     }
 }
 
 @Composable
-fun HomeScreenContent(state: HomeScreenState) {
+private fun HomeScreenContent(
+    state: HomeScreenState,
+    navController: NavHostController
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .scrollable(
-                rememberScrollState(),
-                orientation = Orientation.Vertical
-            )
+            .verticalScroll(rememberScrollState())
     ) {
         // Carousel with movie banners
         MovieBannerCarouselWithIndicators(movies = state.movieCarousels)
@@ -101,7 +117,11 @@ fun HomeScreenContent(state: HomeScreenState) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        MovieRail(movies = state.batmanRails)
+        MovieRail(movies = state.batmanRails,
+            onCardClick = {
+                navController.navigate("search/$it")
+            }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -112,12 +132,19 @@ fun HomeScreenContent(state: HomeScreenState) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
 
-        MovieRail(movies = state.latestRails)
+        MovieRail(movies = state.latestRails,
+            onCardClick = {
+                navController.navigate("search/$it")
+            }
+        )
     }
 }
 
 @Composable
-fun MovieBannerCarouselWithIndicators(movies: List<Movie>?) {
+private fun MovieBannerCarouselWithIndicators(
+    movies: List<Movie>?,
+    onItemClicked: (String) -> Unit = {}
+) {
     val pagerState = rememberPagerState(pageCount = { movies?.size ?: 0 })
     LaunchedEffect(Unit) {
         while (true) {
@@ -144,10 +171,16 @@ fun MovieBannerCarouselWithIndicators(movies: List<Movie>?) {
                 Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                elevation = CardDefaults.cardElevation(4.dp)
+                elevation = CardDefaults.cardElevation(4.dp),
             ) {
                 Image(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(
+                            onClick = {
+                                onItemClicked(movies?.get(currentPage)?.imdbID ?: "")
+                            }
+                        ),
                     painter = rememberAsyncImagePainter(movies?.get(currentPage)?.poster),
                     contentScale = ContentScale.FillBounds,
                     contentDescription = ""
@@ -166,7 +199,7 @@ fun MovieBannerCarouselWithIndicators(movies: List<Movie>?) {
 }
 
 @Composable
-fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
+private fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -179,7 +212,7 @@ fun PageIndicator(pageCount: Int, currentPage: Int, modifier: Modifier) {
 }
 
 @Composable
-fun IndicatorDots(isSelected: Boolean, modifier: Modifier) {
+private fun IndicatorDots(isSelected: Boolean, modifier: Modifier) {
     val size = animateDpAsState(targetValue = if (isSelected) 12.dp else 10.dp, label = "")
     Box(
         modifier = modifier
@@ -193,28 +226,29 @@ fun IndicatorDots(isSelected: Boolean, modifier: Modifier) {
 }
 
 @Composable
-fun MovieRail(movies: List<Movie>?) {
+private fun MovieRail(movies: List<Movie>?, onCardClick: (String) -> Unit = {}) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         movies?.let {
             items(it) { movie ->
-                MovieCard(movie)
+                MovieCard(movie, onCardClick = { onCardClick(movie.imdbID) })
             }
         }
     }
 }
 
 @Composable
-fun MovieCard(movie: Movie) {
+private fun MovieCard(movie: Movie, onCardClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .width(150.dp)
             .height(250.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        onClick = onCardClick,
     ) {
         Column {
             Image(

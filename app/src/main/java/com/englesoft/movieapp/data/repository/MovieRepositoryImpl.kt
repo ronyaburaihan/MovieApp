@@ -1,9 +1,10 @@
 package com.englesoft.movieapp.data.repository
 
 import com.englesoft.movieapp.data.mapper.toMovie
-import com.englesoft.movieapp.data.model.MovieDetails
+import com.englesoft.movieapp.data.mapper.toMovieDetails
 import com.englesoft.movieapp.data.remote.MovieApi
 import com.englesoft.movieapp.domain.model.Movie
+import com.englesoft.movieapp.domain.model.MovieDetails
 import com.englesoft.movieapp.domain.repository.MovieRepository
 import com.englesoft.movieapp.util.Resource
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class MovieRepositoryImpl @Inject constructor(
             Resource.Success(
                 data = movieApi.getMovieDetails(
                     imdbID = imdbID,
-                )
+                ).toMovieDetails()
             )
         } catch (e: Exception) {
             e.printStackTrace()

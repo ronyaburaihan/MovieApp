@@ -26,10 +26,12 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://www.omdbapi.com\"")
+            buildConfigField("String", "STREAM_URL", "\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\"")
             buildConfigField("String", "API_KEY", "\"${getApiKey()}\"")
         }
         release {
             buildConfigField("String", "BASE_URL", "\"https://www.omdbapi.com\"")
+            buildConfigField("String", "STREAM_URL", "\"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4\"")
             buildConfigField("String", "API_KEY", "\"${getApiKey()}\"")
 
             isMinifyEnabled = false
